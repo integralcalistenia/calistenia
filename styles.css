@@ -739,12 +739,53 @@ textarea{
 }
 
 @media (max-width: 640px){
+  .site-header{
+    grid-template-columns:1fr;
+    gap:12px;
+    align-items:flex-start;
+  }
+
+  .brand{
+    align-items:center;
+  }
+
+  .brand-text{
+    text-align:left;
+  }
+
+  .nav{
+    order:3;
+  }
+
+  .header-actions{
+    order:2;
+    width:100%;
+  }
+
+  .login-btn{
+    width:100%;
+    text-align:center;
+  }
+
+  .promo{
+    padding:8px 6vw 0;
+  }
+
   .promo-img{
-    height:440px;
+    height:360px;
   }
 
   .promo-overlay h2{
-    font-size:32px;
+    font-size:28px;
+  }
+
+  .promo-overlay{
+    padding:20px;
+  }
+
+  .promo-eyebrow{
+    font-size:10px;
+    letter-spacing:2px;
   }
   .site-header{
     padding:10px 6vw;
