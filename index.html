@@ -370,6 +370,11 @@
     let email = document.getElementById("loginEmail").value;
     let password = document.getElementById("loginPassword").value;
 
+    if(!password){
+      alert("Ingresá tu contraseña.");
+      return;
+    }
+
     auth.signInWithEmailAndPassword(email,password)
       .then(()=>{
         alert("Bienvenido a Calistenia Integral");
