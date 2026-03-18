@@ -560,6 +560,13 @@ textarea{
   margin-bottom:14px;
 }
 
+.contact-icon svg{
+  width:22px;
+  height:22px;
+  stroke:var(--text);
+  stroke-width:1.6;
+}
+
 .contact-card h4{
   margin:0 0 8px;
   font-size:18px;
@@ -741,6 +748,10 @@ textarea{
 }
 
 @media (max-width: 640px){
+  main{
+    padding-top:6px;
+  }
+
   .site-header{
     grid-template-columns:1fr;
     gap:12px;

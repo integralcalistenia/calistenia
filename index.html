@@ -39,7 +39,10 @@
   <main>
     <section class="promo">
       <div class="promo-card">
-        <img src="fotoprincipal.png.jpeg" alt="Entrenamiento de calistenia" class="promo-img">
+        <picture>
+          <source media="(max-width: 640px)" srcset="fotoprincipalcelular.png.jpeg">
+          <img src="fotoprincipal.png.jpeg" alt="Entrenamiento de calistenia" class="promo-img">
+        </picture>
         <div class="promo-overlay">
           <p class="promo-eyebrow">Calistenia Integral</p>
           <h2>Accedé a tu primera clase gratis</h2>
@@ -219,19 +222,35 @@
   <footer class="site-footer">
     <div class="contact-grid">
       <div class="contact-card">
-        <div class="contact-icon">@</div>
+        <div class="contact-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16v10H4z" fill="none"></path>
+            <path d="M4 7l8 6 8-6" fill="none"></path>
+          </svg>
+        </div>
         <h4>Email</h4>
         <p>Consultas y coordinación de reservas.</p>
         <a href="mailto:integralcalistenia@gmail.com">integralcalistenia@gmail.com</a>
       </div>
       <div class="contact-card">
-        <div class="contact-icon">W</div>
+        <div class="contact-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 4h12v16H6z" fill="none"></path>
+            <path d="M9 8h6M9 12h6M9 16h4" fill="none"></path>
+          </svg>
+        </div>
         <h4>WhatsApp</h4>
         <p>Atención directa para dudas rápidas.</p>
         <a href="https://wa.me/5491132864864">Ir a WhatsApp</a>
       </div>
       <div class="contact-card">
-        <div class="contact-icon">IG</div>
+        <div class="contact-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="4" width="16" height="16" rx="4" ry="4" fill="none"></rect>
+            <circle cx="12" cy="12" r="4" fill="none"></circle>
+            <circle cx="17" cy="7" r="1.5"></circle>
+          </svg>
+        </div>
         <h4>Instagram</h4>
         <p>Seguinos para novedades y entrenamientos.</p>
         <a href="https://www.instagram.com/calisteniaintegral26/">Ir a Instagram</a>
@@ -357,7 +376,11 @@
         cerrarLogin();
       })
       .catch((error)=>{
-        alert(error.message);
+        if(error.code === "auth/wrong-password" || error.code === "auth/invalid-login-credentials"){
+          alert("La contraseña es incorrecta.");
+        }else{
+          alert(error.message);
+        }
       });
   }
 
