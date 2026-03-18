@@ -376,7 +376,7 @@
         cerrarLogin();
       })
       .catch((error)=>{
-        if(error.code === "auth/wrong-password" || error.code === "auth/invalid-login-credentials"){
+        if(error.code === "auth/wrong-password" || error.code === "auth/invalid-login-credentials" || error.code === "auth/invalid-credential"){
           alert("La contraseña es incorrecta.");
         }else{
           alert(error.message);
