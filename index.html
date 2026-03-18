@@ -370,6 +370,17 @@
     let email = document.getElementById("loginEmail").value;
     let password = document.getElementById("loginPassword").value;
 
+    if(!email){
+      alert("Ingresá tu correo electrónico.");
+      return;
+    }
+
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if(!emailValido){
+      alert("El correo electrónico es incorrecto.");
+      return;
+    }
+
     if(!password){
       alert("Ingresá tu contraseña.");
       return;
