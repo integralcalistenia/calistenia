@@ -117,7 +117,7 @@
             </div>
             <div class="field">
               <label for="time">Horario</label>
-              <input id="time" type="text" name="time" placeholder="07:00" inputmode="text" autocomplete="off" pattern="^([01]\\d|2[0-3]):[0-5]\\d$" required>
+              <input id="time" type="text" name="time" placeholder="07:00 o 7:00am" inputmode="text" autocomplete="off" required>
             </div>
           </div>
 
@@ -181,7 +181,7 @@
             </div>
             <div class="field">
               <label for="cancelTime">Horario</label>
-              <input id="cancelTime" type="text" name="time" placeholder="07:00" inputmode="text" autocomplete="off" pattern="^([01]\\d|2[0-3]):[0-5]\\d$" required>
+              <input id="cancelTime" type="text" name="time" placeholder="07:00 o 7:00am" inputmode="text" autocomplete="off" required>
             </div>
           </div>
 
@@ -443,8 +443,40 @@
   const TIME_START = "07:00";
   const TIME_END = "21:00";
 
-  function isValidTimeFormat(value){
-    return /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
+  function normalizeTimeInput(value){
+    if(!value){
+      return "";
+    }
+    const cleaned = value.trim().toLowerCase().replace(/\s+/g, "");
+    const match = cleaned.match(/^(\d{1,2})(?::(\d{2}))?(am|pm)?$/);
+    if(!match){
+      return "";
+    }
+    let hours = Number(match[1]);
+    const minutes = match[2] ? Number(match[2]) : 0;
+    const meridiem = match[3];
+
+    if(Number.isNaN(hours) || Number.isNaN(minutes) || minutes > 59){
+      return "";
+    }
+
+    if(meridiem){
+      if(hours < 1 || hours > 12){
+        return "";
+      }
+      if(meridiem === "pm" && hours !== 12){
+        hours += 12;
+      }
+      if(meridiem === "am" && hours === 12){
+        hours = 0;
+      }
+    }else{
+      if(hours > 23){
+        return "";
+      }
+    }
+
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
   }
 
   function timeToMinutes(value){
@@ -453,10 +485,11 @@
   }
 
   function isTimeInRange(value){
-    if(!isValidTimeFormat(value)){
+    const normalized = normalizeTimeInput(value);
+    if(!normalized){
       return false;
     }
-    const minutes = timeToMinutes(value);
+    const minutes = timeToMinutes(normalized);
     return minutes >= timeToMinutes(TIME_START) && minutes <= timeToMinutes(TIME_END);
   }
 
@@ -464,8 +497,8 @@
     if(!value){
       return `Ingresá un horario entre ${TIME_START} y ${TIME_END}.`;
     }
-    if(!isValidTimeFormat(value)){
-      return "Usá el formato HH:MM (ej: 07:00).";
+    if(!normalizeTimeInput(value)){
+      return "Usá el formato 07:00 o 7:00am.";
     }
     if(!isTimeInRange(value)){
       return `El horario debe estar entre ${TIME_START} y ${TIME_END}.`;
@@ -530,8 +563,10 @@
   document.querySelector("[name=date]").addEventListener("change", function(){
     let fecha = this.value;
     let hora = document.querySelector("[name=time]").value;
+    const normalized = normalizeTimeInput(hora);
     if(hora && isTimeInRange(hora)){
-      mostrarCupos(fecha, hora);
+      document.querySelector("[name=time]").value = normalized;
+      mostrarCupos(fecha, normalized);
     }else if(hora){
       setStatus(getTimeError(hora), "error");
     }
@@ -540,8 +575,10 @@
   document.querySelector("[name=time]").addEventListener("input", function(){
     let hora = this.value;
     let fecha = document.querySelector("[name=date]").value;
+    const normalized = normalizeTimeInput(hora);
     if(fecha && isTimeInRange(hora)){
-      mostrarCupos(fecha, hora);
+      this.value = normalized;
+      mostrarCupos(fecha, normalized);
     }else if(fecha && hora){
       setStatus(getTimeError(hora), "error");
     }
@@ -557,10 +594,12 @@
       return;
     }
 
+    const normalizedTime = normalizeTimeInput(form.time.value.trim());
     if(!isTimeInRange(form.time.value.trim())){
       setStatus(getTimeError(form.time.value.trim()), "error");
       return;
     }
+    form.time.value = normalizedTime;
 
     if(disponibilidad.disponibles <= 0){
       setStatus("No hay cupos en este horario", "error");
@@ -618,10 +657,12 @@
       return;
     }
 
+    const normalizedCancelTime = normalizeTimeInput(time);
     if(!isTimeInRange(time)){
       setCancelStatus(getTimeError(time), "error");
       return;
     }
+    document.getElementById("cancelTime").value = normalizedCancelTime;
 
     if(date !== dateInput.value){
       dateInput.value = date;
@@ -629,7 +670,7 @@
 
     document.getElementById("cancelClassType").value = "Reserva de clase cancelada";
 
-    const classTime = toLocalDateTime(date, time);
+    const classTime = toLocalDateTime(date, normalizedCancelTime);
     const now = new Date();
     const diffMs = classTime - now;
 
@@ -644,7 +685,7 @@
       let removed = 0;
       snapshot.forEach(function(child){
         const r = child.val();
-        if(r.email === email && r.date === date && r.time === time){
+        if(r.email === email && r.date === date && r.time === normalizedCancelTime){
           child.ref.remove();
           removed++;
         }
