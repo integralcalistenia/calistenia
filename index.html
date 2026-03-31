@@ -94,7 +94,7 @@
         <h2>Reservar clase</h2>
         <p class="sub">Completá tus datos y asegurá tu lugar.</p>
 
-        <form id="formulario">
+        <form id="formulario" novalidate>
           <div class="field">
             <label for="name">Nombre completo</label>
             <input id="name" type="text" name="name" placeholder="Ej: Ana Pérez" required>
@@ -159,7 +159,7 @@
         <h2>Cancelar reserva</h2>
         <p class="sub">Podés cancelar hasta 30 minutos antes de la clase.</p>
 
-        <form id="cancelForm" action="https://www.form-to-email.com/api/s/OO9r3tpgtewg" method="POST" target="cancelFrame">
+        <form id="cancelForm" action="https://www.form-to-email.com/api/s/OO9r3tpgtewg" method="POST" target="cancelFrame" novalidate>
           <input type="text" id="cancelPhone" name="phone" value="-" class="visually-hidden" aria-hidden="true" tabindex="-1">
           <input type="text" id="cancelClassType" name="class_type" value="Reserva de clase cancelada" class="visually-hidden" aria-hidden="true" tabindex="-1">
           <input type="text" id="cancelCorreo" name="correo electrónico" value="" class="visually-hidden" aria-hidden="true" tabindex="-1">
@@ -587,10 +587,16 @@
   document.getElementById("formulario").addEventListener("submit", function(event){
     event.preventDefault();
 
+    let form = this;
     let user = auth.currentUser;
     if(!user){
       setStatus("Debes iniciar sesión para reservar", "error");
       abrirLogin();
+      return;
+    }
+
+    if(!form.name.value.trim() || !form.email.value.trim() || !form.phone.value.trim() || !form.date.value.trim() || !form.time.value.trim()){
+      setStatus("Completá nombre, email, teléfono, fecha y horario.", "error");
       return;
     }
 
@@ -606,7 +612,6 @@
       return;
     }
 
-    let form = this;
     setLoading(true);
 
     db.ref("reservas").push({
